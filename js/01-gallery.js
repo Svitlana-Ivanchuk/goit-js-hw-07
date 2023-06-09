@@ -2,8 +2,6 @@ import { galleryItems } from "./gallery-items.js";
 import * as basicLightbox from "basiclightbox";
 // Change code below this line
 
-// const basicLightbox = require("basiclightbox");
-
 const galleryCollection = document.querySelector(".gallery");
 const cardsMarkup = createImageCardsMarkup(galleryItems);
 
