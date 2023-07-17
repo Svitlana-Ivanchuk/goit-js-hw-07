@@ -1,41 +1,48 @@
 import { galleryItems } from "./gallery-items.js";
-import * as basicLightbox from "basiclightbox";
 // Change code below this line
 
 const galleryCollection = document.querySelector(".gallery");
-const cardsMarkup = createImageCardsMarkup(galleryItems);
+const cardsMarkup = createImageCardMarkup(galleryItems);
 
 galleryCollection.insertAdjacentHTML("beforeend", cardsMarkup);
-galleryCollection.addEventListener("click", handlerGalleryCollectionClick);
+galleryCollection.addEventListener("click", handelGalleryCollectionClick);
 
-function createImageCardsMarkup(galleryItems) {
+function createImageCardMarkup(galleryItems) {
   return galleryItems
     .map(({ preview, original, description }) => {
-      return `<li class="gallery__item">
-      <a class="gallery__link" href="${original}">
-        <img
-          class="gallery__image"
-          src="${preview}"
-          data-source="${original}"
-          alt="${description}"
-        />
-      </a>
-    </li>`;
+      return `
+    <li class="gallery__item">
+    <a class="gallery__link" href="${original}">
+      <img
+        class="gallery__image"
+        src="${preview}"
+        data-source="${original}"
+        alt="${description}"
+      />
+    </a>
+  </li>`;
     })
     .join("");
 }
 
-function handlerGalleryCollectionClick(e) {
-  console.log(e.target);
-}
+function handelGalleryCollectionClick(evt) {
+  evt.preventDefault();
 
-const instance = basicLightbox.create(`
-    <div class="modal">
-        <p>
-            Your first lightbox with just a few lines of code.
-            Yes, it's really that simple.
-        </p>
-    </div>
+  const originalItem = evt.target.dataset.source;
+
+  if (evt.target.nodeName !== "IMG") return;
+
+  const createModal = basicLightbox.create(`
+    <img src="${originalItem}" width="800" height="600">
 `);
-
-instance.show();
+  createModal.show(() => {
+    window.addEventListener("keydown", handelEscKeyDown);
+  });
+  function handelEscKeyDown(evt) {
+    if (evt.code === "Escape") {
+      createModal.close(() => {
+        window.removeEventListener("keydown", handelEscKeyDown);
+      });
+    }
+  }
+}
